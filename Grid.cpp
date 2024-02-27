@@ -16,6 +16,7 @@ Grid::Grid(int gridWidthCells, float cellSpacingPx, sf::Vector2f containerSizePx
 	this->cellSizePx = (minDimension - (cellSpacingPx * gridWidthCells)) / gridWidthCells;
     this->grid = new sf::RectangleShape**[gridWidthCells];
     this->gridWidthCells = gridWidthCells;
+    this->cellSpacingPx = cellSpacingPx;
 
     float posIncrement = this->cellSizePx + cellSpacingPx;
     for (int x = 0; x < gridWidthCells; x++) {
@@ -45,6 +46,28 @@ Grid::CellState Grid::getCellState(int xPos, int yPos) {
         if (color.toInteger() == cellColor) {
             return (Grid::CellState)x;
         }
+    }
+}
+
+/*
+    Converts a pixel screen position to the position of a cell in the grid.
+    If no conversion can be made a vector of (-1, -1) will be returned.
+*/
+const sf::Vector2i Grid::screenPositionToCellPosition(float x, float y) {
+    float increment = this->cellSizePx + this->cellSpacingPx;
+    int cellX = floorf(x / increment);
+    int cellY = floorf(y / increment);
+
+    sf::Vector2f cellTopLeft(cellX * increment, cellY * increment);
+    sf::Vector2f cellBottomRight = cellTopLeft + sf::Vector2f(this->cellSizePx, this->cellSizePx);
+    bool isWithinCell = (x >= cellTopLeft.x && x <= cellBottomRight.x) && (y >= cellTopLeft.y && y <= cellBottomRight.y);
+    bool isCellWithinGrid = (cellX < this->gridWidthCells && cellY < this->gridWidthCells) && (cellX >= 0 && cellY >= 0);
+
+    if (isWithinCell && isCellWithinGrid) {
+        return sf::Vector2i(cellX, cellY);
+    }
+    else {
+        return sf::Vector2i(-1, -1);
     }
 }
 

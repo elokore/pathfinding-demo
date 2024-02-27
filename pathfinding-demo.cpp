@@ -9,18 +9,28 @@ const int gridSize = 32;
 sf::Vector2f screenSize(1600.0f, 800.0f);
 Grid grid(gridSize, 4.0f, sf::Vector2f(800.0f, 800.0f));
 
+static void onMouseButtonPressed(sf::Event* event) {
+    sf::Vector2i cellLocation = grid.screenPositionToCellPosition(event->mouseButton.x, event->mouseButton.y);
+    if (cellLocation.x < 0 || cellLocation.y < 0) return;
+    
+    grid.setCellState(cellLocation.x, cellLocation.y, Grid::CellState::Obstacle);
+}
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode((int) screenSize.x, (int) screenSize.y), "Pathfinding Demo");
-    grid.setCellState(3, 5, Grid::CellState::Obstacle);
 
     while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
+                onMouseButtonPressed(&event);
+            }
         }
 
         window.clear();

@@ -20,8 +20,10 @@ public:
 	const void drawGrid(sf::RenderWindow* window);
 	void setCellState(int xPos, int yPos, CellState state);
 	CellState getCellState(int xPos, int yPos);
+	const sf::Vector2i screenPositionToCellPosition(float x, float y);
 private:
 	int gridWidthCells;
+	float cellSpacingPx;
 	float cellSizePx;
 	float spacingPx;
 	sf::Vector2f containerSizePx;
